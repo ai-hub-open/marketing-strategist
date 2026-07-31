@@ -20,7 +20,7 @@
 10. **Выбор площадок.** Оценивает каналы по шести критериям и предлагает три приоритетных варианта с обоснованием.
 11. **Бюджет.** Распределяет деньги между тестом, оптимизацией и масштабированием.
 12. **KPI и мониторинг.** Задаёт целевые показатели и правила «сокращать / усиливать / отключать».
-13. **Отчёт и передача.** Собирает итоговые документы и план передачи в пакет выбранной рекламной системы.
+13. **Отчёт и передача.** Собирает итоговые документы и план передачи в пакет выбранной рекламной площадки.
 
 Состояние хранится в рабочей папке, поэтому к стратегии можно вернуться в новой сессии с того же шага.
 
@@ -37,11 +37,10 @@
 
 | Путь | Содержимое |
 |---|---|
-| `marketing-strategist/SKILL.md` | основной маршрут работы |
-| `marketing-strategist/references/` | 11 методических справочников по этапам |
-| `marketing-strategist/subagents/` | отдельные исследовательские потоки для отрасли и конкурентов |
-| `marketing-strategist/scripts/` | генераторы стратегии, медиаплана и саммари |
-| `dist/` | готовые архивы для установки |
+| `SKILL.md` | основной маршрут работы |
+| `references/` | 11 методических справочников по этапам |
+| `subagents/` | отдельные исследовательские потоки для отрасли и конкурентов |
+| `scripts/` | генераторы стратегии, медиаплана и саммари |
 
 ### Исследовательские потоки
 
@@ -85,25 +84,27 @@
 
 ## Установка
 
-Подробная инструкция находится в [`marketing-strategist/INSTALL.md`](marketing-strategist/INSTALL.md).
+Подробная инструкция — в [`INSTALL.md`](INSTALL.md).
 
 ### Claude Cowork
 
-Загрузите архивы из `dist/` через **Settings → Skills → Upload**:
+Среда принимает скиллы ZIP-архивами; готовые архивы к релизу не прикладываются — упакуйте папки сами и загрузите каждую через **Settings → Skills → Upload**:
 
-1. `marketing-strategist.zip` — основной скилл;
-2. `industry-research.zip` — исследование отрасли;
-3. `competitor-research.zip` — исследование конкурентов.
+1. корень репозитория без папки `subagents/` — основной скилл;
+2. `subagents/industry-research/` — исследование отрасли;
+3. `subagents/competitor-research/` — исследование конкурентов.
 
 ### Claude Code
 
 ```bash
-unzip dist/marketing-strategist.zip -d ~/.claude/skills/
-unzip dist/industry-research.zip -d ~/.claude/skills/
-unzip dist/competitor-research.zip -d ~/.claude/skills/
+# из папки, куда клонирован репозиторий
+cp -r marketing-strategist ~/.claude/skills/
+cp -r marketing-strategist/subagents/industry-research ~/.claude/skills/
+cp -r marketing-strategist/subagents/competitor-research ~/.claude/skills/
+rm -rf ~/.claude/skills/marketing-strategist/subagents
 ```
 
-Либо скопируйте папку `marketing-strategist/` целиком в `~/.claude/skills/`.
+После перезапуска агента напишите: «Подготовь маркетинговую стратегию для [продукт], сайт [адрес]».
 
 ## Необязательные зависимости
 

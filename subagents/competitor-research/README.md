@@ -1,6 +1,6 @@
 # competitor-research (субагент)
 
-Часть набора **marketing-strategist v2**. Это не самостоятельный инструмент —
+Часть набора **marketing-strategist**. Это не самостоятельный инструмент —
 форк-субагент Шага 5 (анализ конкурентов), который вызывает оркестратор.
 
 - Запускается по команде `/competitor-research <slug> "<ниша>" "<регион>"`
@@ -8,4 +8,4 @@
 - Работает в изолированном контексте (`context: fork`), возвращает только сводку.
 - Reference вложен в пакет (`references/competitor-research.md`).
 
-Ставить вместе с `marketing-strategist.zip`. Подробности — в INSTALL главного пакета.
+Ставить вместе с основным скиллом `marketing-strategist`. Подробности — в [INSTALL.md](../../INSTALL.md) главного пакета.
