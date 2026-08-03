@@ -51,6 +51,13 @@ def _register_font():
         (f"{base}/DejaVuSans.ttf", f"{base}/DejaVuSans-Bold.ttf"),
         ("/usr/share/fonts/dejavu/DejaVuSans.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"),
         ("C:/Windows/Fonts/arial.ttf", "C:/Windows/Fonts/arialbd.ttf"),
+        # macOS: ни один из путей выше здесь не существует, без этих строк
+        # фолбэк уходил в Helvetica и кириллица в PDF не рисовалась.
+        ("/System/Library/Fonts/Supplemental/Arial.ttf",
+         "/System/Library/Fonts/Supplemental/Arial Bold.ttf"),
+        ("/Library/Fonts/Arial.ttf", "/Library/Fonts/Arial Bold.ttf"),
+        ("/opt/homebrew/share/fonts/DejaVuSans.ttf",
+         "/opt/homebrew/share/fonts/DejaVuSans-Bold.ttf"),
     ]
     for r, b in cands:
         if Path(r).exists():
@@ -65,6 +72,17 @@ def _register_font():
                 break
             except Exception:
                 pass
+
+    if reg == "Helvetica":
+        # Молчать нельзя: PDF соберётся, скрипт отчитается «OK», а кириллица
+        # выйдет пустыми прямоугольниками — встроенные шрифты её не рисуют.
+        print(
+            "WARN: не найден системный шрифт с кириллицей — в PDF русский текст "
+            "будет нечитаемым.\n"
+            "      Linux: sudo apt install fonts-dejavu-core · macOS: Arial в "
+            "/System/Library/Fonts/Supplemental/ · Windows: C:/Windows/Fonts/arial.ttf",
+            file=sys.stderr,
+        )
     return reg, bold
 
 
