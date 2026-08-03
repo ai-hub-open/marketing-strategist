@@ -1,33 +1,43 @@
-# Установка — marketing-strategist v2 (3 пакета)
+# Установка — marketing-strategist (3 пакета)
 
-Cowork импортирует **один SKILL.md за раз**, поэтому пакет разбит на три отдельных
-скилла. Ставятся независимо, через тот же интерфейс загрузки zip.
+Cowork импортирует **один SKILL.md за раз**, поэтому набор разбит на три отдельных
+скилла. Ставятся независимо, через тот же интерфейс загрузки ZIP.
 
-## Что ставим (3 файла)
+## Что ставим (3 пакета)
 
 | Пакет | Что это | Обязателен |
 |---|---|---|
-| `marketing-strategist.zip` | главный оркестратор (шаги 0–12) | да |
-| `industry-research.zip` | субагент Шага 4 (отрасль) | желательно |
-| `competitor-research.zip` | субагент Шага 5 (конкуренты) | желательно |
+| `marketing-strategist` | главный оркестратор (шаги 0–12) | да |
+| `industry-research` | субагент Шага 4 (отрасль) | желательно |
+| `competitor-research` | субагент Шага 5 (конкуренты) | желательно |
 
-Оркестратор работает и без субагентов — на Шагах 4–5 есть фолбэк на инлайн-выполнение.
-Но именно субагенты дают выигрыш по контексту, ради которого делалась v2.
+Оркестратор работает и без субагентов — на Шагах 4–5 он выполняет те же шаги сам
+по тем же справочникам. Но именно субагенты дают выигрыш по контексту.
 Рекомендуется ставить все три.
+
+Готовые архивы к релизу не прикладываются — упакуйте папки из клонированного
+репозитория сами:
+
+- основной скилл — содержимое корня репозитория без папки `subagents/`;
+- `subagents/industry-research/` — отдельным архивом;
+- `subagents/competitor-research/` — отдельным архивом.
 
 ## Установка (Cowork)
 
-Загрузите каждый zip по очереди через Settings → Skills → Upload (или кнопку добавления
-скилла). Cowork прочитает SKILL.md и покажет карточку. После загрузки убедитесь, что
-тумблер скилла включён.
+Загрузите каждый ZIP по очереди через Settings → Skills → Upload (или кнопку
+добавления скилла). Cowork прочитает SKILL.md и покажет карточку. После загрузки
+убедитесь, что переключатель скилла включён.
 
 ## Установка (Claude Code)
 
 ```bash
-unzip marketing-strategist.zip -d ~/.claude/skills/
-unzip industry-research.zip   -d ~/.claude/skills/
-unzip competitor-research.zip -d ~/.claude/skills/
+# из папки, куда клонирован репозиторий
+cp -r marketing-strategist ~/.claude/skills/
+cp -r marketing-strategist/subagents/industry-research ~/.claude/skills/
+cp -r marketing-strategist/subagents/competitor-research ~/.claude/skills/
+rm -rf ~/.claude/skills/marketing-strategist/subagents
 ```
+
 Перезапустите `claude` — новые папки подхватятся после рестарта.
 
 ## Проверка
@@ -43,18 +53,21 @@ unzip competitor-research.zip -d ~/.claude/skills/
 ```bash
 pip install python-docx openpyxl reportlab
 ```
-Без них — graceful fallback: DOCX → MD, XLSX → CSV, PDF → MD.
+
+Без них документы сохраняются в текстовых форматах: DOCX → Markdown,
+XLSX → CSV, PDF → Markdown.
 
 ## На что обратить внимание на первом прогоне
 
-1. **Субагенты — самодостаточны.** В каждый вложен свой reference (`references/...md`),
+1. **Субагенты — самодостаточны.** В каждый вложен свой справочник (`references/...md`),
    путь внутри скилла уже поправлен. Дополнительно ничего класть не нужно.
 2. **agent: general-purpose** в субагентах — они ПИШУТ артефакты. Хотите только
    исследование без записи — поменяйте на `agent: Explore` и уберите `Write`.
-3. **Защита бюджета.** Площадочные скиллы (vk-ads-launcher, yandex-direct-funnel)
-   должны иметь `disable-model-invocation: true` и создавать кампании в PAUSED.
-   Это ставится в самих площадочных скиллах, не в этом пакете — проверьте отдельно.
+3. **Защита бюджета.** Площадочные пакеты ([yandex-direct-manager](https://github.com/ai-hub-open/yandex-direct-manager),
+   [vk-ads-manager](https://github.com/ai-hub-open/vk-ads-manager)) создают кампании
+   черновиком или на паузе — запуск остаётся за человеком. Это свойство самих
+   площадочных пакетов, не этого набора; проверьте его при их установке.
 
 ## Версия
 
-v2 — июнь 2026. Изменения — в CHANGELOG-v2.md.
+Изменения — в [CHANGELOG.md](CHANGELOG.md).
