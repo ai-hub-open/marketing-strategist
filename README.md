@@ -84,27 +84,27 @@
 
 ## Установка
 
-Подробная инструкция — в [`INSTALL.md`](INSTALL.md).
+Скачайте три архива со страницы [последнего релиза](https://github.com/ai-hub-open/marketing-strategist/releases/latest) — [marketing-strategist.zip](https://github.com/ai-hub-open/marketing-strategist/releases/latest/download/marketing-strategist.zip), [industry-research.zip](https://github.com/ai-hub-open/marketing-strategist/releases/latest/download/industry-research.zip) и [competitor-research.zip](https://github.com/ai-hub-open/marketing-strategist/releases/latest/download/competitor-research.zip). Клонировать репозиторий и собирать архивы самому не нужно.
+
+Скилл разбит на три пакета потому, что среда импортирует один `SKILL.md` за раз. Обязателен только оркестратор; исследовательские потоки желательны — они экономят контекст.
 
 ### Claude Cowork
 
-Среда принимает скиллы ZIP-архивами; готовые архивы к релизу не прикладываются — упакуйте папки сами и загрузите каждую через **Settings → Skills → Upload**:
-
-1. корень репозитория без папки `subagents/` — основной скилл;
-2. `subagents/industry-research/` — исследование отрасли;
-3. `subagents/competitor-research/` — исследование конкурентов.
+Загрузите каждый архив через **Settings → Skills → Upload** и проверьте, что переключатель скилла включён.
 
 ### Claude Code
 
+Из папки, куда скачались архивы:
+
 ```bash
-# из папки, куда клонирован репозиторий
-cp -r marketing-strategist ~/.claude/skills/
-cp -r marketing-strategist/subagents/industry-research ~/.claude/skills/
-cp -r marketing-strategist/subagents/competitor-research ~/.claude/skills/
-rm -rf ~/.claude/skills/marketing-strategist/subagents
+unzip -o marketing-strategist.zip -d ~/.claude/skills/
+unzip -o industry-research.zip   -d ~/.claude/skills/
+unzip -o competitor-research.zip -d ~/.claude/skills/
 ```
 
 После перезапуска агента напишите: «Подготовь маркетинговую стратегию для [продукт], сайт [адрес]».
+
+Подробности, проверка установки и сборка архивов из исходников — в [`INSTALL.md`](INSTALL.md).
 
 ## Необязательные зависимости
 

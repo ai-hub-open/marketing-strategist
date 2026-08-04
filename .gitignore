@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+
+# Собранные архивы — они живут в релизах, а не в дереве
+dist/
+
+# Рабочие папки кампаний
+marketing-campaigns/
+
+.DS_Store
+.venv/
+venv/
