@@ -1,6 +1,6 @@
 # Handoff to Platforms — передача в площадочные скиллы
 
-Используется на Шаге 12, после генерации финального отчёта. Задача — **чисто передать готовые артефакты** в специализированные скиллы запуска (yandex-direct-funnel, vk-ads-launcher, и т.п.), чтобы они не переделывали бриф/гипотезы/УТП с нуля.
+Используется на Шаге 12, после генерации финального отчёта. Задача — **чисто передать готовые артефакты** в специализированные скиллы запуска (yandex-direct-manager, vk-ads-manager, и т.п.), чтобы они не переделывали бриф/гипотезы/УТП с нуля.
 
 ## Главный принцип
 
@@ -10,8 +10,8 @@
 
 | Площадка | Скилл | Что передаём |
 |----------|-------|--------------|
-| Яндекс.Директ (Поиск + РСЯ) | `yandex-direct-funnel` | `01_brief.md`, `02_strategy.md`, `industry_research.json`, `hypotheses.md` (selected), `07_personas.md`, `usp_final.json`, `kpi_framework.json` (по каналу), доля бюджета из `budget_allocation.json` |
-| VK Ads / myTarget | `vk-ads-launcher` | то же + персоны с уточнениями «где живёт в VK» (сообщества, интересы) |
+| Яндекс.Директ (Поиск + РСЯ) | `yandex-direct-manager` | `01_brief.md`, `02_strategy.md`, `industry_research.json`, `hypotheses.md` (selected), `07_personas.md`, `usp_final.json`, `kpi_framework.json` (по каналу), доля бюджета из `budget_allocation.json` |
+| VK Ads / myTarget | `vk-ads-manager` | то же + персоны с уточнениями «где живёт в VK» (сообщества, интересы) |
 | Meta (FB/IG) | пока ручной запуск или Meta-скилл если есть | весь набор + ограничение по гео |
 | TikTok / Reels | пока вручную | usp_final + персоны + бюджет на видеопродакшн |
 | Telegram Ads | пока вручную | usp_final + персоны + список целевых каналов / тематик |
@@ -25,7 +25,7 @@
 # Handoff Plan: <slug>
 
 ## Передача в Яндекс.Директ
-**Скилл:** yandex-direct-funnel
+**Скилл:** yandex-direct-manager
 **Месячный бюджет на канал (по фазам):**
 - Тест: 75 000 ₽
 - Опт: 110 000 ₽
@@ -47,7 +47,7 @@
 - `budget_allocation.json` (раздел по каналу)
 
 **Команда запуска:**
-«Запусти yandex-direct-funnel. Контекст в marketing-campaigns/<slug>/. Использовать гипотезы 1 и 4, персоны П1 и П2, основное УТП по usp_final.json. Бюджет и KPI — по фазам из budget_allocation.json и kpi_framework.json.»
+«Запусти yandex-direct-manager. Контекст в marketing-campaigns/<slug>/. Использовать гипотезы 1 и 4, персоны П1 и П2, основное УТП по usp_final.json. Бюджет и KPI — по фазам из budget_allocation.json и kpi_framework.json.»
 
 ## Передача в VK Ads
 [аналогично]
@@ -71,8 +71,8 @@
 3) Дзен (опционально, Фаза 3)
 
 Готов запускать конкретные кампании? Какие?
-— yandex-direct-funnel (передам артефакты)
-— vk-ads-launcher (передам артефакты)
+— yandex-direct-manager (передам артефакты)
+— vk-ads-manager (передам артефакты)
 — оба последовательно
 
 Или ставим паузу до согласования с медиабайером?
