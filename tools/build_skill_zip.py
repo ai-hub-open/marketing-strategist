@@ -51,9 +51,15 @@ NAME_MAX = 64
 ALLOWED_FRONTMATTER_KEYS = {"name", "description"}
 
 # Не попадает в архив: инструменты сборки, документация репозитория, мусор.
+# Список намеренно шире, чем текущий состав репозитория: INSTALL.md, CHANGELOG.md
+# и .gitignore удалены, но живут в старых ветках и вернутся при первом же мердже
+# оттуда — пусть они и в этом случае не доезжают до пользователя.
+# subagents/ здесь намеренно НЕТ: если папка вернётся мерджем из старой ветки,
+# валидация должна упасть с «в пакет попало 3 файлов SKILL.md», а не молча
+# собрать архив поверх испорченного репозитория.
 EXCLUDE_DIRS = {"__pycache__", ".git", ".github", ".venv", "venv", "dist", "tools",
                 "marketing-campaigns"}
-EXCLUDE_FILES = {".gitignore", ".DS_Store", "Thumbs.db",
+EXCLUDE_FILES = {".gitignore", ".DS_Store", "Thumbs.db", "package.sh",
                  "README.md", "INSTALL.md", "CHANGELOG.md", "LICENSE"}
 EXCLUDE_GLOBS = {"*.pyc", "*.pyo", "*.swp", "*.bak", "*.tmp"}
 
