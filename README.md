@@ -37,18 +37,9 @@
 
 | Путь | Содержимое |
 |---|---|
-| `marketing-strategist/SKILL.md` | основной маршрут работы |
-| `marketing-strategist/references/` | 11 методических справочников по этапам |
-| `marketing-strategist/subagents/` | отдельные исследовательские потоки для отрасли и конкурентов |
-| `marketing-strategist/scripts/` | генераторы стратегии, медиаплана и саммари |
-| `dist/` | готовые архивы для установки |
-
-### Исследовательские потоки
-
-- `industry-research` — собирает отраслевые ориентиры, каналы конкурентов и рискованные практики;
-- `competitor-research` — читает сайты конкурентов, разбирает УТП и цены, строит матрицу каналов.
-
-Если среда не поддерживает отдельные рабочие потоки, основной скилл выполняет те же шаги самостоятельно по тем же справочникам.
+| `SKILL.md` | основной маршрут работы, шаги 0–12 |
+| `references/` | 11 методических справочников по этапам |
+| `scripts/` | генераторы стратегии, медиаплана и саммари |
 
 ### Генераторы документов
 
@@ -85,25 +76,26 @@
 
 ## Установка
 
-Подробная инструкция находится в [`marketing-strategist/INSTALL.md`](marketing-strategist/INSTALL.md).
+### Claude Desktop и claude.ai
 
-### Claude Cowork
+Скачайте `marketing-strategist.zip` из раздела **Assets** на странице
+[последнего релиза](https://github.com/ai-hub-open/marketing-strategist/releases/latest)
+и загрузите его через **Settings → Capabilities → Skills**.
 
-Загрузите архивы из `dist/` через **Settings → Skills → Upload**:
+Кнопка **Code → Download ZIP** для этого не подходит: она отдаёт архив с папкой
+`marketing-strategist-main/` и файлами репозитория, которых загрузчик скиллов не ждёт.
 
-1. `marketing-strategist.zip` — основной скилл;
-2. `industry-research.zip` — исследование отрасли;
-3. `competitor-research.zip` — исследование конкурентов.
 
 ### Claude Code
 
 ```bash
-unzip dist/marketing-strategist.zip -d ~/.claude/skills/
-unzip dist/industry-research.zip -d ~/.claude/skills/
-unzip dist/competitor-research.zip -d ~/.claude/skills/
+git clone https://github.com/ai-hub-open/marketing-strategist.git
+cp -r marketing-strategist ~/.claude/skills/marketing-strategist
 ```
 
 Либо скопируйте папку `marketing-strategist/` целиком в `~/.claude/skills/`.
+
+Подробности, проверка установки и ручная сборка архива — в [`INSTALL.md`](INSTALL.md).
 
 ## Необязательные зависимости
 

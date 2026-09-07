@@ -1,59 +1,76 @@
-# Установка — marketing-strategist v2 (3 пакета)
+# Установка — marketing-strategist
 
-Cowork импортирует **один SKILL.md за раз**, поэтому пакет разбит на три отдельных
-скилла. Ставятся независимо, через тот же интерфейс загрузки zip.
+Один скилл, один архив. Скачали, загрузили, работает.
 
-## Что ставим (3 файла)
+## Claude Desktop и claude.ai
 
-| Пакет | Что это | Обязателен |
-|---|---|---|
-| `marketing-strategist.zip` | главный оркестратор (шаги 0–12) | да |
-| `industry-research.zip` | субагент Шага 4 (отрасль) | желательно |
-| `competitor-research.zip` | субагент Шага 5 (конкуренты) | желательно |
+1. Скачайте `marketing-strategist.zip` со страницы
+   [последнего релиза](https://github.com/ai-hub-open/marketing-strategist/releases/latest)
+   — файл лежит в разделе **Assets**.
+2. В Claude откройте **Settings → Capabilities → Skills** и нажмите загрузку скилла.
+3. Выберите скачанный `marketing-strategist.zip`.
+4. Убедитесь, что переключатель скилла включён.
 
-Оркестратор работает и без субагентов — на Шагах 4–5 есть фолбэк на инлайн-выполнение.
-Но именно субагенты дают выигрыш по контексту, ради которого делалась v2.
-Рекомендуется ставить все три.
+> Не используйте зелёную кнопку **Code → Download ZIP** на главной странице
+> репозитория. Она отдаёт архив с папкой `marketing-strategist-main/` внутри и
+> файлами репозитория, которых загрузчик скиллов не ждёт. Нужен именно файл из
+> раздела Assets релиза.
 
-## Установка (Cowork)
+**Требуется включённое выполнение кода.** Скилл генерирует DOCX, XLSX и PDF
+питоновскими скриптами. В Claude это работает при включённой настройке
+[создания и редактирования файлов](https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude).
+Если она выключена, документы сохранятся в текстовом виде: DOCX → Markdown,
+XLSX → CSV, PDF → Markdown.
 
-Загрузите каждый zip по очереди через Settings → Skills → Upload (или кнопку добавления
-скилла). Cowork прочитает SKILL.md и покажет карточку. После загрузки убедитесь, что
-тумблер скилла включён.
-
-## Установка (Claude Code)
+## Claude Code
 
 ```bash
-unzip marketing-strategist.zip -d ~/.claude/skills/
-unzip industry-research.zip   -d ~/.claude/skills/
-unzip competitor-research.zip -d ~/.claude/skills/
+git clone https://github.com/ai-hub-open/marketing-strategist.git
+cp -r marketing-strategist ~/.claude/skills/marketing-strategist
 ```
-Перезапустите `claude` — новые папки подхватятся после рестарта.
 
-## Проверка
+Перезапустите `claude` — новая папка подхватится после рестарта.
 
-В списке скиллов (`What skills are available?`) должны быть три:
-`marketing-strategist`, `industry-research`, `competitor-research`.
-
-Триггер оркестратора: «подготовь маркетинговую стратегию для X, сайт Y».
-На Шагах 4 и 5 оркестратор вызывает `/industry-research` и `/competitor-research`.
-
-## Зависимости scripts (опционально, только для главного пакета)
+Зависимости скриптов ставятся отдельно:
 
 ```bash
 pip install python-docx openpyxl reportlab
 ```
-Без них — graceful fallback: DOCX → MD, XLSX → CSV, PDF → MD.
+Без них скрипты не падают, а сохраняют документы в текстовых форматах.
 
-## На что обратить внимание на первом прогоне
 
-1. **Субагенты — самодостаточны.** В каждый вложен свой reference (`references/...md`),
-   путь внутри скилла уже поправлен. Дополнительно ничего класть не нужно.
-2. **agent: general-purpose** в субагентах — они ПИШУТ артефакты. Хотите только
-   исследование без записи — поменяйте на `agent: Explore` и уберите `Write`.
-3. **Защита бюджета.** Площадочные скиллы (vk-ads-launcher, yandex-direct-funnel)
-   должны иметь `disable-model-invocation: true` и создавать кампании в PAUSED.
-   Это ставится в самих площадочных скиллах, не в этом пакете — проверьте отдельно.
+## Проверка
+
+Спросите Claude: `Какие скиллы доступны?` — в списке должен быть
+`marketing-strategist`.
+
+Триггер: «подготовь маркетинговую стратегию для X, сайт Y».
+
+Скилл работает пошагово и после каждого шага ждёт подтверждения. Первый прогон
+занимает 1-2 сессии; артефакты складываются в папку `marketing-campaigns/<slug>/`.
+
+## Сборка архива вручную
+
+Релизный архив собирается из репозитория:
+
+```bash
+pip install pyyaml
+python tools/build_skill_zip.py          # → dist/marketing-strategist.zip
+python tools/build_skill_zip.py --check  # только валидация
+```
+
+Сборщик проверяет то, на чём чаще всего ломается загрузка: ровно один `SKILL.md`,
+корректный YAML во фронтматтере, только поля `name` и `description`, длина
+описания, существование всех файлов, на которые ссылается `SKILL.md`. Файлы
+репозитория (README, LICENSE, CHANGELOG, `tools/`) в архив не попадают.
+
+## Что дальше
+
+На Шаге 12 скилл предлагает передать готовые артефакты в площадочные скиллы —
+[yandex-direct-manager](https://github.com/ai-hub-open/yandex-direct-manager) и
+[vk-ads-manager](https://github.com/ai-hub-open/vk-ads-manager). Они ставятся
+отдельно и создают кампании черновиком или на паузе — запуск остаётся за
+человеком. Это свойство самих площадочных пакетов; проверьте его при установке.
 
 ## Версия
 
