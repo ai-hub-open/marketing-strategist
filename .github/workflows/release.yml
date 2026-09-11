@@ -1,0 +1,42 @@
+name: release
+
+# Собирает marketing-strategist.zip и прикладывает его к релизу. Без этого
+# единственный способ получить архив — кнопка «Download ZIP» на GitHub, а она
+# заворачивает всё в папку с суффиксом -main и кладёт внутрь файлы репозитория,
+# которых загрузчик скиллов не ждёт.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Собрать и провалидировать пакет
+        run: python tools/build_skill_zip.py
+
+      - name: Приложить архив к релизу
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/marketing-strategist.zip
+
+      - name: Сохранить архив как артефакт сборки
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketing-strategist-zip
+          path: dist/marketing-strategist.zip

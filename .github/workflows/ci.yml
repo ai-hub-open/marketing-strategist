@@ -1,0 +1,40 @@
+name: ci
+
+# Валидирует пакет на каждый пуш и PR: ровно один SKILL.md, фронтматтер парсится,
+# поля из схемы claude.ai, ссылки на references/ и scripts/ ведут в существующие файлы.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate-skill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Проверить пакет скилла
+        run: python tools/build_skill_zip.py --check
+
+      - name: Проверить, что скрипты компилируются
+        run: python -m compileall -q scripts
+
+      # В репозитории нет .gitignore, поэтому байт-код и собранные архивы легко
+      # уезжают в коммит по невнимательности — так уже случалось с
+      # scripts/__pycache__/*.pyc. Проверка ловит это на PR.
+      - name: Не должно быть закоммиченного байт-кода и сборок
+        run: |
+          junk=$(git ls-files | grep -E '(^|/)__pycache__/|\.py[co]$|^dist/' || true)
+          if [ -n "$junk" ]; then
+            echo "В репозиторий закоммичены артефакты сборки:"
+            echo "$junk"
+            exit 1
+          fi
+          echo "Байт-кода и сборок в индексе нет."
