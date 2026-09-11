@@ -95,7 +95,7 @@ cp -r marketing-strategist ~/.claude/skills/marketing-strategist
 
 Либо скопируйте папку `marketing-strategist/` целиком в `~/.claude/skills/`.
 
-Подробности, проверка установки и ручная сборка архива — в [`INSTALL.md`](INSTALL.md).
+Собрать `marketing-strategist.zip` вручную можно скриптом `python tools/build_skill_zip.py`.
 
 ## Необязательные зависимости
 
