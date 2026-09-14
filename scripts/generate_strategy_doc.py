@@ -452,7 +452,7 @@ def _generate_docx(workspace: Path, data: dict) -> Path:
     doc.add_heading("7. План передачи в площадочные скиллы", level=1)
     doc.add_paragraph(
         "Этот отчёт — общая часть. Для запуска конкретных кампаний используются "
-        "специализированные скиллы (yandex-direct-funnel, vk-ads-launcher и др.). "
+        "специализированные скиллы (yandex-direct-manager, vk-ads-manager и др.). "
         "Они принимают артефакты из этой папки как вход и не переделывают бриф/"
         "гипотезы/УТП с нуля."
     )
