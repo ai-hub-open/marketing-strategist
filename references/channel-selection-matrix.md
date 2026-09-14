@@ -174,7 +174,7 @@
       "hypotheses_to_test": [1, 4],
       "recommended_formats": ["search_ads"],
       "risks": ["..."],
-      "platform_skill": "yandex-direct-funnel"
+      "platform_skill": "yandex-direct-manager"
     },
     {
       "priority": 2,
@@ -183,7 +183,7 @@
       "hypotheses_to_test": [3],
       "recommended_formats": ["lal", "retarget"],
       "risks": ["..."],
-      "platform_skill": "vk-ads-launcher"
+      "platform_skill": "vk-ads-manager"
     },
     {
       "priority": 3,
@@ -192,7 +192,7 @@
       "hypotheses_to_test": [],
       "recommended_formats": ["retarget"],
       "risks": ["..."],
-      "platform_skill": "yandex-direct-funnel"
+      "platform_skill": "yandex-direct-manager"
     }
   ],
   "rejected": [
