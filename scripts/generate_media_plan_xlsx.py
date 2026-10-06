@@ -24,12 +24,15 @@ from _io_helpers import (  # noqa: E402
     BRAND,
     PHASE_HEX,
     PHASE_LABELS,
+    budget_for_horizon_label,
     channel_label,
     check_required,
     currency_sign,
     format_money,
     load_workspace,
+    planning_horizon_of,
     s,
+    total_budget_of,
 )
 
 MONEY_FMT_BASE = '#,##0" {sign}"'
@@ -213,7 +216,8 @@ def _xlsx(workspace: Path, data: dict) -> Path:
 
     biz = kpi.get("business_kpi", {}) or {}
     cards = [
-        ("Бюджет на 3 месяца", format_money(bg.get("total_budget_3m", 0), cur)),
+        (budget_for_horizon_label(planning_horizon_of(data)),
+         format_money(total_budget_of(data) or 0, cur)),
         ("Каналов в плане", str(len(channels))),
         ("Главный KPI",
          f"{s(biz.get('main'),'CPL')} ≤ {format_money(biz.get('target', 0), cur)}" if biz else "—"),

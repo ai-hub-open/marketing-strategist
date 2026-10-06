@@ -25,11 +25,14 @@ from _io_helpers import (  # noqa: E402
     PHASE_HEX,
     PHASE_LABELS,
     PRIORITY_COLORS,
+    budget_for_horizon_label,
     channel_label,
     currency_sign,
     format_money,
     load_workspace,
+    planning_horizon_of,
     s,
+    total_budget_of,
 )
 
 RU_MONTHS = ["", "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -164,7 +167,8 @@ def _pdf(workspace: Path, data: dict) -> Path:
                      colWidths=[4.05 * cm], rowHeights=[0.55 * cm, 0.7 * cm])
 
     cards_data = [
-        ("Бюджет на 3 месяца", format_money(bg.get("total_budget_3m", 0), cur)),
+        (budget_for_horizon_label(planning_horizon_of(data)),
+         format_money(total_budget_of(data) or 0, cur)),
         ("Главный KPI",
          f"{s(biz.get('main'),'CPL')} ≤ {format_money(biz.get('target', 0), cur)}" if biz else "—"),
         ("Объём", f"≥ {s(biz.get('volume_target_monthly'))}/мес" if biz else "—"),
