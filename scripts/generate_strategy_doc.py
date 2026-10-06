@@ -28,14 +28,18 @@ from _io_helpers import (  # noqa: E402
     PHASE_GOALS,
     PHASE_LABELS,
     PRIORITY_COLORS,
+    budget_for_horizon_label,
     channel_label,
     check_required,
     currency_sign,
     format_money,
+    history_label,
     load_workspace,
     parse_inline,
     parse_markdown,
+    planning_horizon_of,
     s,
+    total_budget_of,
 )
 
 RU_MONTHS = [
@@ -272,8 +276,9 @@ def _exec_summary(doc, data: dict) -> None:
 
     names = ", ".join(channel_label(c.get("channel", "")) for c in top3[:3]) or "не определены"
     kv("Топ-3 канала", names)
-    if bg.get("total_budget_3m"):
-        kv("Бюджет на 3 месяца", format_money(bg["total_budget_3m"], cur))
+    total = total_budget_of(data)
+    if total:
+        kv(budget_for_horizon_label(planning_horizon_of(data)), format_money(total, cur))
     biz = kpi.get("business_kpi", {}) or {}
     if biz:
         kv(
@@ -384,6 +389,9 @@ def _generate_docx(workspace: Path, data: dict) -> Path:
             )
             if c.get("rationale"):
                 doc.add_paragraph(c["rationale"])
+            p = doc.add_paragraph()
+            p.add_run("История у клиента: ").bold = True
+            p.add_run(history_label(c))
             if c.get("hypotheses_to_test"):
                 p = doc.add_paragraph()
                 p.add_run("Гипотезы для теста: ").bold = True
@@ -483,8 +491,9 @@ def _md_fallback(workspace: Path, data: dict) -> Path:
         names = ", ".join(channel_label(c.get("channel", "")) for c in top3[:3])
         lines += [f"**Топ-3 канала:** {names}", ""]
     bg = data.get("budget_allocation", {}) or {}
-    if bg.get("total_budget_3m"):
-        lines += [f"**Бюджет на 3 месяца:** {format_money(bg['total_budget_3m'], bg.get('currency', 'RUB'))}", ""]
+    total = total_budget_of(data)
+    if total:
+        lines += [f"**{budget_for_horizon_label(planning_horizon_of(data))}:** {format_money(total, bg.get('currency', 'RUB'))}", ""]
     lines += ["---", ""]
     sections = [
         ("1. Бриф", data.get("brief_md", "")),

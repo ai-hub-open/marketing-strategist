@@ -2,8 +2,18 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
+
+DEFAULT_PLANNING_HORIZON_MONTHS = 6
+_LEGACY_3M_HORIZON = 3
+
+# Markdown-tolerant: «Горизонт планирования: 6» and «**Горизонт планирования:** 6 месяцев»
+_HORIZON_RE = re.compile(
+    r"горизонт\s+планирования\D{0,12}(\d+)",
+    re.IGNORECASE,
+)
 
 
 def read_json(path: Path, default: Any = None) -> Any:
@@ -27,7 +37,7 @@ def load_workspace(workspace: Path) -> dict[str, Any]:
     """Загрузить все ключевые артефакты кампании в один dict."""
     state = read_json(workspace / "_state.json", default={})
 
-    return {
+    data = {
         "state": state,
         "slug": state.get("slug", workspace.name),
         "product_name": state.get("product_name", workspace.name),
@@ -49,6 +59,10 @@ def load_workspace(workspace: Path) -> dict[str, Any]:
         "kpi_framework_md": read_text(workspace / "kpi_framework.md"),
         "kpi_framework": read_json(workspace / "kpi_framework.json", default={}),
     }
+    horizon, total = resolve_horizon_and_budget(data)
+    data["planning_horizon_months"] = horizon
+    data["total_budget"] = total
+    return data
 
 
 def check_required(data: dict[str, Any]) -> list[str]:
@@ -92,6 +106,30 @@ def channel_label(channel_key: str) -> str:
     return CHANNEL_LABELS.get(channel_key, channel_key)
 
 
+HISTORY_VERDICTS = {
+    "works": "работает",
+    "expensive": "дорого",
+    "no_leads": "не дал лидов",
+    "no_data": "мало данных",
+    "never_ran": "не запускали",
+}
+
+
+def history_label(channel: dict) -> str:
+    """Client's own history for a top-3 channel (see references/channel-history.md).
+
+    No history field at all, or "none", means the recommendation was made without it.
+    """
+    h = channel.get("history")
+    if not h or h == "none":
+        return "без истории"
+    if isinstance(h, dict):
+        verdict = HISTORY_VERDICTS.get(h.get("verdict"), h.get("verdict") or "?")
+        reason = h.get("verdict_reason")
+        return f"{verdict}: {reason}" if reason else verdict
+    return str(h)
+
+
 def format_money(amount, currency: str = "RUB") -> str:
     """Отформатировать сумму с разделителями тысяч."""
     try:
@@ -112,6 +150,77 @@ def s(value, default: str = "—") -> str:
         return default
     text = str(value).strip()
     return text if text else default
+
+
+def _as_positive_int(value) -> int | None:
+    try:
+        n = int(round(float(value)))
+    except (TypeError, ValueError):
+        return None
+    return n if n > 0 else None
+
+
+def ru_month_word(n: int) -> str:
+    n = abs(int(n))
+    if 11 <= n % 100 <= 14:
+        return "месяцев"
+    last = n % 10
+    if last == 1:
+        return "месяц"
+    if 2 <= last <= 4:
+        return "месяца"
+    return "месяцев"
+
+
+def budget_for_horizon_label(months: int) -> str:
+    return f"Бюджет на {months} {ru_month_word(months)}"
+
+
+def parse_horizon_from_brief(brief_md: str) -> int | None:
+    """Вытащить горизонт из строки «Горизонт планирования: N месяцев» в брифе."""
+    match = _HORIZON_RE.search(brief_md or "")
+    return _as_positive_int(match.group(1)) if match else None
+
+
+def resolve_horizon_and_budget(data: dict[str, Any]) -> tuple[int, int]:
+    """Вернуть (horizon_months, total_budget).
+
+    Источник горизонта — бриф, затем _state.json, затем budget_allocation.json.
+    Скрипты не выбирают срок сами и не подставляют 3 месяца по умолчанию.
+    """
+    bg = data.get("budget_allocation") or {}
+    state = data.get("state") or {}
+    legacy_3m = _as_positive_int(bg.get("total_budget_3m"))
+
+    horizon = (
+        parse_horizon_from_brief(data.get("brief_md") or "")
+        or _as_positive_int(state.get("planning_horizon_months"))
+        or _as_positive_int(bg.get("planning_horizon_months"))
+        or (_LEGACY_3M_HORIZON if legacy_3m is not None else DEFAULT_PLANNING_HORIZON_MONTHS)
+    )
+
+    total = _as_positive_int(bg.get("total_budget"))
+    if total is not None:
+        return horizon, total
+
+    monthly = _as_positive_int(bg.get("monthly_budget"))
+    if monthly is not None:
+        return horizon, monthly * horizon
+
+    phases_sum = sum(
+        _as_positive_int(ph.get("budget")) or 0
+        for ph in (bg.get("phases") or [])
+    )
+    return horizon, phases_sum or legacy_3m or 0
+
+
+def planning_horizon_of(data: dict[str, Any]) -> int:
+    return _as_positive_int(data.get("planning_horizon_months")) or DEFAULT_PLANNING_HORIZON_MONTHS
+
+
+def total_budget_of(data: dict[str, Any]) -> Any:
+    bg = data.get("budget_allocation") or {}
+    return data.get("total_budget") or bg.get("total_budget") or bg.get("total_budget_3m")
 
 
 # ──────────────────────────────────────────────────────────────────────────

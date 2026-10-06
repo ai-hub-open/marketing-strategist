@@ -17,6 +17,7 @@ import argparse
 import datetime as _dt
 import sys
 from pathlib import Path
+from xml.sax.saxutils import escape as _esc
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -25,11 +26,15 @@ from _io_helpers import (  # noqa: E402
     PHASE_HEX,
     PHASE_LABELS,
     PRIORITY_COLORS,
+    budget_for_horizon_label,
     channel_label,
     currency_sign,
     format_money,
+    history_label,
     load_workspace,
+    planning_horizon_of,
     s,
+    total_budget_of,
 )
 
 RU_MONTHS = ["", "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -155,16 +160,17 @@ def _pdf(workspace: Path, data: dict) -> Path:
     story = []
 
     if usp.get("primary", {}).get("text"):
-        story.append(Paragraph(f"<b>УТП:</b> {usp['primary']['text']}", normal))
+        story.append(Paragraph(f"<b>УТП:</b> {_esc(str(usp['primary']['text']))}", normal))
         story.append(Spacer(1, 0.25 * cm))
 
     # KPI-карточки
     def card(label, value):
-        return Table([[Paragraph(label, card_lbl)], [Paragraph(value, card_val)]],
+        return Table([[Paragraph(_esc(str(label)), card_lbl)], [Paragraph(_esc(str(value)), card_val)]],
                      colWidths=[4.05 * cm], rowHeights=[0.55 * cm, 0.7 * cm])
 
     cards_data = [
-        ("Бюджет на 3 месяца", format_money(bg.get("total_budget_3m", 0), cur)),
+        (budget_for_horizon_label(planning_horizon_of(data)),
+         format_money(total_budget_of(data) or 0, cur)),
         ("Главный KPI",
          f"{s(biz.get('main'),'CPL')} ≤ {format_money(biz.get('target', 0), cur)}" if biz else "—"),
         ("Объём", f"≥ {s(biz.get('volume_target_monthly'))}/мес" if biz else "—"),
@@ -205,10 +211,11 @@ def _pdf(workspace: Path, data: dict) -> Path:
         for i, c in enumerate(top3, start=1):
             rationale = s(c.get("rationale"), "")
             short = rationale[:130] + ("…" if len(rationale) > 130 else "")
+            short = f"{short} · История: {history_label(c)}" if short else f"История: {history_label(c)}"
             tdata.append([
-                Paragraph(str(s(c.get("priority"))), cell_w),
-                Paragraph(channel_label(c.get("channel", "")), cell_b),
-                Paragraph(short, cell),
+                Paragraph(_esc(str(s(c.get("priority")))), cell_w),
+                Paragraph(_esc(channel_label(c.get("channel", ""))), cell_b),
+                Paragraph(_esc(short), cell),
             ])
             try:
                 pc = colors.HexColor("#" + PRIORITY_COLORS.get(int(c.get("priority")), BRAND["muted"]))
@@ -242,10 +249,10 @@ def _pdf(workspace: Path, data: dict) -> Path:
             except (TypeError, ValueError):
                 share = "—"
             pdata.append([
-                Paragraph(PHASE_LABELS.get(name, name), cell_b),
-                Paragraph(f"{s(ph.get('duration_weeks'))} нед", cell),
-                Paragraph(format_money(ph.get("budget", 0), cur), cell),
-                Paragraph(share, cell),
+                Paragraph(_esc(str(PHASE_LABELS.get(name, name))), cell_b),
+                Paragraph(_esc(f"{s(ph.get('duration_weeks'))} нед"), cell),
+                Paragraph(_esc(format_money(ph.get("budget", 0), cur)), cell),
+                Paragraph(_esc(share), cell),
             ])
             hexc = PHASE_HEX.get(name)
             if hexc:
