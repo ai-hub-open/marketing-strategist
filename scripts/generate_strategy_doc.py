@@ -33,6 +33,7 @@ from _io_helpers import (  # noqa: E402
     check_required,
     currency_sign,
     format_money,
+    history_label,
     load_workspace,
     parse_inline,
     parse_markdown,
@@ -388,6 +389,9 @@ def _generate_docx(workspace: Path, data: dict) -> Path:
             )
             if c.get("rationale"):
                 doc.add_paragraph(c["rationale"])
+            p = doc.add_paragraph()
+            p.add_run("История у клиента: ").bold = True
+            p.add_run(history_label(c))
             if c.get("hypotheses_to_test"):
                 p = doc.add_paragraph()
                 p.add_run("Гипотезы для теста: ").bold = True

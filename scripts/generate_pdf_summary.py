@@ -29,6 +29,7 @@ from _io_helpers import (  # noqa: E402
     channel_label,
     currency_sign,
     format_money,
+    history_label,
     load_workspace,
     planning_horizon_of,
     s,
@@ -209,6 +210,7 @@ def _pdf(workspace: Path, data: dict) -> Path:
         for i, c in enumerate(top3, start=1):
             rationale = s(c.get("rationale"), "")
             short = rationale[:130] + ("…" if len(rationale) > 130 else "")
+            short = f"{short} · История: {history_label(c)}" if short else f"История: {history_label(c)}"
             tdata.append([
                 Paragraph(str(s(c.get("priority"))), cell_w),
                 Paragraph(channel_label(c.get("channel", "")), cell_b),

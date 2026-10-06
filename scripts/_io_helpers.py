@@ -106,6 +106,30 @@ def channel_label(channel_key: str) -> str:
     return CHANNEL_LABELS.get(channel_key, channel_key)
 
 
+HISTORY_VERDICTS = {
+    "works": "работает",
+    "expensive": "дорого",
+    "no_leads": "не дал лидов",
+    "no_data": "мало данных",
+    "never_ran": "не запускали",
+}
+
+
+def history_label(channel: dict) -> str:
+    """Client's own history for a top-3 channel (see references/channel-history.md).
+
+    No history field at all, or "none", means the recommendation was made without it.
+    """
+    h = channel.get("history")
+    if not h or h == "none":
+        return "без истории"
+    if isinstance(h, dict):
+        verdict = HISTORY_VERDICTS.get(h.get("verdict"), h.get("verdict") or "?")
+        reason = h.get("verdict_reason")
+        return f"{verdict}: {reason}" if reason else verdict
+    return str(h)
+
+
 def format_money(amount, currency: str = "RUB") -> str:
     """Отформатировать сумму с разделителями тысяч."""
     try:
