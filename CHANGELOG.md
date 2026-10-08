@@ -7,7 +7,8 @@
 - **Передача в Директ находит скилл под любым именем.** `yandex-direct-manager` 0.18.0 ставится
   плагином Claude Code и вызывается как `/yandex-direct-manager:yandex-direct-manager`. Шаг 12В
   принимает и это имя, и `/yandex-direct-manager` (установка папкой), и префикс набора в Claude
-  Desktop / claude.ai.
+  Desktop / claude.ai. Описание для пользователей —
+  [`docs/releases/v1.0.2.md`](docs/releases/v1.0.2.md).
 
 ## 1.0.1 — 2026-10-06
 
