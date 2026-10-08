@@ -359,6 +359,8 @@ python scripts/generate_pdf_summary.py --workspace marketing-campaigns/<slug>
 С какого начнём?
 ```
 
+**Имя скилла Директа зависит от установки.** Папкой — `/yandex-direct-manager`, плагином Claude Code — `/yandex-direct-manager:yandex-direct-manager`, загруженный в Claude Desktop / claude.ai может идти с префиксом набора (`anthropic-skills:yandex-direct-manager`). Вызывай тот из доступных скиллов, чьё имя равно `yandex-direct-manager` или оканчивается на `:yandex-direct-manager`, и в сообщении выше покажи его настоящее имя. Нет ни одного — скажи, что скилл Директа не установлен, и дай ссылку: https://github.com/ai-hub-open/yandex-direct-manager.
+
 **Только после явного выбора канала и «ОК»** вызови соответствующий площадочный скилл, передав пути к артефактам. Без явного подтверждения человека — не вызывай: техническая защита на стороне площадочного скилла не настроена, ограничение держится этим правилом.
 
 **Артефакт:** `12_handoff_plan.md` — какой скилл какие файлы получает; если Директ в топ-3 — `12_brief_for_yandex_direct.md` (бриф в формате `yandex-direct-manager`, правила — `references/handoff-to-platforms.md`).
