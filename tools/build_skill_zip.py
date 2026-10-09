@@ -57,7 +57,7 @@ ALLOWED_FRONTMATTER_KEYS = {"name", "description"}
 # subagents/ здесь намеренно НЕТ: если папка вернётся мерджем из старой ветки,
 # валидация должна упасть с «в пакет попало 3 файлов SKILL.md», а не молча
 # собрать архив поверх испорченного репозитория.
-EXCLUDE_DIRS = {"__pycache__", ".git", ".github", ".venv", "venv", "dist", "tools",
+EXCLUDE_DIRS = {"__pycache__", ".git", ".github", ".claude-plugin", ".venv", "venv", "dist", "tools",
                 "marketing-campaigns"}
 EXCLUDE_FILES = {".gitignore", ".DS_Store", "Thumbs.db", "package.sh",
                  "README.md", "INSTALL.md", "CHANGELOG.md", "LICENSE"}
