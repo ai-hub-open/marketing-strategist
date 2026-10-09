@@ -35,16 +35,31 @@
 
 Пакет устроен как папка скилла: `SKILL.md` в корне, рядом `references/` и `scripts/`. Агентная среда — программа, в которой работает агент, — берёт скиллы из своего каталога.
 
-### Claude Code
+### Claude Code — плагином, с обновлениями
+
+В сессии Claude Code:
+
+```
+/plugin marketplace add ai-hub-open/claude-plugins
+/plugin install marketing-strategist@ai-hub-open
+```
+
+Скилл вызывается как `/marketing-strategist:marketing-strategist` или просьбой своими словами («нужна маркетинговая стратегия»).
+
+Затем включите автообновление: `/plugin` → **Marketplaces** → `ai-hub-open` → **Enable auto-update**. С ним новые версии приходят сами при старте сессии. Без него — командой `/plugin marketplace update ai-hub-open`.
+
+Библиотеки для документов этапа 12 плагин сам не ставит — см. [Требования](#требования). Если раньше скилл лежал папкой в `~/.claude/skills/marketing-strategist`, удалите её, иначе скилл будет загружаться дважды.
+
+### Claude Code — папкой
 
 ```bash
 git clone https://github.com/ai-hub-open/marketing-strategist.git
 mkdir -p ~/.claude/skills/marketing-strategist
-cp -r marketing-strategist/SKILL.md marketing-strategist/references marketing-strategist/scripts \
+cp -r marketing-strategist/SKILL.md marketing-strategist/VERSION marketing-strategist/references marketing-strategist/scripts \
       ~/.claude/skills/marketing-strategist/
 ```
 
-Копируются только три пути: остальное в репозитории — сборка, проверки и этот файл — скиллу не нужно.
+Копируются только эти четыре пути (по `VERSION` скилл узнаёт, что вышла новая версия): остальное в репозитории — сборка, проверки и этот файл — скиллу не нужно.
 
 ### Claude Desktop и claude.ai
 
