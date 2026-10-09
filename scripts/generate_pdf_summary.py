@@ -28,6 +28,7 @@ from _io_helpers import (  # noqa: E402
     PRIORITY_COLORS,
     budget_for_horizon_label,
     channel_label,
+    check_required,
     currency_sign,
     format_money,
     history_label,
@@ -315,6 +316,13 @@ def main() -> None:
         sys.exit(1)
 
     data = load_workspace(workspace)
+    missing = check_required(data)
+    if missing:
+        # Этот PDF уходит клиенту, а не медиабайеру: молча собранный
+        # одностраничник с прочерками хуже, чем у двух других генераторов.
+        print(f"WARNING: missing artefacts: {', '.join(missing)}", file=sys.stderr)
+        print("Саммари будет собрано с пробелами.", file=sys.stderr)
+
     try:
         out = _pdf(workspace, data)
         print(f"OK: {out}")

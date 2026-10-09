@@ -58,6 +58,21 @@ def _amount(ph, ch_key) -> int:
     return 0
 
 
+def _weeks(ph) -> int:
+    """Длительность фазы в неделях, не меньше 1.
+
+    Считать её нужно ровно одинаково и в шапке листа «По неделям», и в строках
+    данных. Раньше шапка брала duration_weeks как есть, а строка — через `or 1`:
+    фаза без duration_weeks давала шапку на 0 колонок и строку на 1, лист
+    разъезжался, а отрицательное значение роняло get_column_letter().
+    """
+    try:
+        weeks = int(ph.get("duration_weeks", 0) or 0)
+    except (TypeError, ValueError):
+        weeks = 0
+    return max(weeks, 1)
+
+
 # ─────────────────────────────── XLSX ──────────────────────────────────────
 def _xlsx(workspace: Path, data: dict) -> Path:
     from openpyxl import Workbook
@@ -145,14 +160,14 @@ def _xlsx(workspace: Path, data: dict) -> Path:
 
     # ============ Sheet: По неделям ============
     ws2 = wb.create_sheet("По неделям")
-    total_weeks = sum(int(p.get("duration_weeks", 0) or 0) for p in phases)
+    total_weeks = sum(_weeks(p) for p in phases)
     wcols = 1 + total_weeks + 1
     ws2.append(["Канал"] + [f"Нед {i+1}" for i in range(total_weeks)] + ["Всего"])
     style_header(ws2, 1, wcols)
     for ch in channels:
         row = [channel_label(ch)]
         for ph in phases:
-            weeks = int(ph.get("duration_weeks", 0) or 0) or 1
+            weeks = _weeks(ph)
             per = round(_amount(ph, ch) / weeks)
             row += [per] * weeks
         ws2.append(row + [0])
