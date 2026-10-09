@@ -407,7 +407,7 @@ python scripts/generate_pdf_summary.py --workspace marketing-campaigns/<slug>
 С какого начнём?
 ```
 
-**Имя скилла Директа зависит от установки.** Папкой — `/yandex-direct-manager`, плагином Claude Code — `/yandex-direct-manager:yandex-direct-manager`, загруженный в Claude Desktop / claude.ai может идти с префиксом набора (`anthropic-skills:yandex-direct-manager`). Вызывай тот из доступных скиллов, чьё имя равно `yandex-direct-manager` или оканчивается на `:yandex-direct-manager`, и в сообщении выше покажи его настоящее имя. Нет ни одного — скажи, что скилл Директа не установлен, и дай ссылку: https://github.com/ai-hub-open/yandex-direct-manager.
+**Имя площадочного скилла зависит от установки.** Папкой — `/yandex-direct-manager`, плагином Claude Code — `/yandex-direct-manager:yandex-direct-manager`, загруженный в Claude Desktop / claude.ai может идти с префиксом набора (`anthropic-skills:yandex-direct-manager`); у `vk-ads-manager` — так же. Вызывай тот из доступных скиллов, чьё имя равно имени площадочного скилла (`yandex-direct-manager`, `vk-ads-manager`) или оканчивается на `:<это имя>`, и в сообщении выше покажи его настоящее имя. Нет ни одного — скажи, что скилл площадки не установлен, и дай ссылку: https://github.com/ai-hub-open/yandex-direct-manager или https://github.com/ai-hub-open/vk-ads-manager.
 
 **Только после явного выбора канала и «ОК»** вызови соответствующий площадочный скилл, передав пути к артефактам. Без явного подтверждения человека — не вызывай: техническая защита на стороне площадочного скилла не настроена, ограничение держится этим правилом.
 
