@@ -345,6 +345,9 @@ def _generate_docx(workspace: Path, data: dict) -> Path:
     doc.add_heading("3. Стратегия и УТП", level=1)
     doc.add_heading("3.1 Стратегический слой", level=2)
     _render_md(doc, data.get("strategy_md", ""), base_level=3)
+    if data.get("demand_md"):
+        # Цифры спроса по Вордстату (Шаг 3) — обоснование типа спроса и веса поисковых каналов.
+        _render_md(doc, data["demand_md"], base_level=3)
     doc.add_heading("3.2 Гипотезы запуска", level=2)
     _render_md(doc, data.get("hypotheses_md", ""), base_level=3)
     doc.add_heading("3.3 УТП", level=2)
@@ -498,6 +501,7 @@ def _md_fallback(workspace: Path, data: dict) -> Path:
     sections = [
         ("1. Бриф", data.get("brief_md", "")),
         ("2. Стратегический слой", data.get("strategy_md", "")),
+        ("2a. Спрос по Вордстату", data.get("demand_md", "")),
         ("3. Отраслевая аналитика", data.get("industry_research_md", "")),
         ("4. Конкуренты", data.get("competitor_analysis_md", "")),
         ("5. Гипотезы", data.get("hypotheses_md", "")),
