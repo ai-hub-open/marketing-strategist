@@ -44,6 +44,7 @@ def load_workspace(workspace: Path) -> dict[str, Any]:
         "client_materials_md": read_text(workspace / "00_client_materials.md"),
         "brief_md": read_text(workspace / "01_brief.md"),
         "strategy_md": read_text(workspace / "02_strategy.md"),
+        "demand_md": read_text(workspace / "03_demand.md"),
         "industry_research_md": read_text(workspace / "industry_research.md"),
         "industry_research": read_json(workspace / "industry_research.json", default={}),
         "competitors_md": read_text(workspace / "04_competitors.md"),
