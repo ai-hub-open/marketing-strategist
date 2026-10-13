@@ -31,6 +31,8 @@ from _io_helpers import (  # noqa: E402
     budget_for_horizon_label,
     channel_label,
     check_required,
+    horizon_budget_warnings,
+    monthly_budget_of,
     currency_sign,
     format_money,
     history_label,
@@ -277,6 +279,9 @@ def _exec_summary(doc, data: dict) -> None:
     names = ", ".join(channel_label(c.get("channel", "")) for c in top3[:3]) or "не определены"
     kv("Топ-3 канала", names)
     total = total_budget_of(data)
+    monthly = monthly_budget_of(data)
+    if monthly:
+        kv("Бюджет в месяц", format_money(monthly, cur))
     if total:
         kv(budget_for_horizon_label(planning_horizon_of(data)), format_money(total, cur))
     biz = kpi.get("business_kpi", {}) or {}
@@ -496,6 +501,9 @@ def _md_fallback(workspace: Path, data: dict) -> Path:
     bg = data.get("budget_allocation", {}) or {}
     total = total_budget_of(data)
     if total:
+        monthly = monthly_budget_of(data)
+        if monthly:
+            lines += [f"**Бюджет в месяц:** {format_money(monthly, bg.get('currency', 'RUB'))}", ""]
         lines += [f"**{budget_for_horizon_label(planning_horizon_of(data))}:** {format_money(total, bg.get('currency', 'RUB'))}", ""]
     lines += ["---", ""]
     sections = [
@@ -529,6 +537,8 @@ def main() -> None:
         sys.exit(1)
 
     data = load_workspace(workspace)
+    for problem in horizon_budget_warnings(data):
+        print(f"WARNING: горизонт и бюджет не сходятся: {problem}", file=sys.stderr)
     missing = check_required(data)
     if missing:
         print(f"WARNING: missing artefacts: {', '.join(missing)}", file=sys.stderr)
