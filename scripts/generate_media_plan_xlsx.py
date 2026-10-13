@@ -27,6 +27,8 @@ from _io_helpers import (  # noqa: E402
     budget_for_horizon_label,
     channel_label,
     check_required,
+    horizon_budget_warnings,
+    monthly_budget_of,
     currency_sign,
     format_money,
     load_workspace,
@@ -230,7 +232,9 @@ def _xlsx(workspace: Path, data: dict) -> Path:
     wsd.merge_cells("A1:D1")
 
     biz = kpi.get("business_kpi", {}) or {}
+    monthly = monthly_budget_of(data)
     cards = [
+        ("Бюджет в месяц", format_money(monthly, cur) if monthly else "—"),
         (budget_for_horizon_label(planning_horizon_of(data)),
          format_money(total_budget_of(data) or 0, cur)),
         ("Каналов в плане", str(len(channels))),
@@ -311,6 +315,8 @@ def main() -> None:
         sys.exit(1)
 
     data = load_workspace(workspace)
+    for problem in horizon_budget_warnings(data):
+        print(f"WARNING: горизонт и бюджет не сходятся: {problem}", file=sys.stderr)
     missing = check_required(data)
     if missing:
         print(f"WARNING: missing artefacts: {', '.join(missing)}", file=sys.stderr)

@@ -26,14 +26,14 @@ from _io_helpers import (  # noqa: E402
     PHASE_HEX,
     PHASE_LABELS,
     PRIORITY_COLORS,
-    budget_for_horizon_label,
     channel_label,
     check_required,
+    budget_pair_label,
+    horizon_budget_warnings,
     currency_sign,
     format_money,
     history_label,
     load_workspace,
-    planning_horizon_of,
     s,
     total_budget_of,
 )
@@ -170,7 +170,7 @@ def _pdf(workspace: Path, data: dict) -> Path:
                      colWidths=[4.05 * cm], rowHeights=[0.55 * cm, 0.7 * cm])
 
     cards_data = [
-        (budget_for_horizon_label(planning_horizon_of(data)),
+        (budget_pair_label(data, cur),
          format_money(total_budget_of(data) or 0, cur)),
         ("Главный KPI",
          f"{s(biz.get('main'),'CPL')} ≤ {format_money(biz.get('target', 0), cur)}" if biz else "—"),
@@ -316,6 +316,8 @@ def main() -> None:
         sys.exit(1)
 
     data = load_workspace(workspace)
+    for problem in horizon_budget_warnings(data):
+        print(f"WARNING: горизонт и бюджет не сходятся: {problem}", file=sys.stderr)
     missing = check_required(data)
     if missing:
         # Этот PDF уходит клиенту, а не медиабайеру: молча собранный

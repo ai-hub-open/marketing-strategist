@@ -219,6 +219,63 @@ def planning_horizon_of(data: dict[str, Any]) -> int:
     return _as_positive_int(data.get("planning_horizon_months")) or DEFAULT_PLANNING_HORIZON_MONTHS
 
 
+_MONTHLY_RE = re.compile(r"месячн\w*\s+бюджет\D{0,12}([\d\s]{3,})", re.IGNORECASE)
+
+
+def monthly_budget_of(data: dict[str, Any]) -> int | None:
+    """Месячный бюджет: из budget_allocation.json, иначе из брифа, иначе сумма ÷ горизонт."""
+    bg = data.get("budget_allocation") or {}
+    monthly = _as_positive_int(bg.get("monthly_budget"))
+    if monthly is None:
+        match = _MONTHLY_RE.search(data.get("brief_md") or "")
+        if match:
+            monthly = _as_positive_int(re.sub(r"\s", "", match.group(1)))
+    if monthly is None:
+        total = _as_positive_int(total_budget_of(data))
+        months = planning_horizon_of(data)
+        if total is not None and months:
+            monthly = round(total / months)
+    return monthly
+
+
+def budget_pair_label(data: dict[str, Any], currency: str = "RUB") -> str:
+    """«200 000 ₽/мес × 3 мес» — оба числа с периодом; без месячного — «Бюджет на N месяцев»."""
+    months = planning_horizon_of(data)
+    monthly = monthly_budget_of(data)
+    if monthly is None:
+        return budget_for_horizon_label(months)
+    return f"{format_money(monthly, currency)}/мес × {months} мес"
+
+
+def horizon_budget_warnings(data: dict[str, Any]) -> list[str]:
+    """Расхождения срока плана и суммы между брифом и budget_allocation.json.
+
+    Демо 10.06: стратегию писали на 6 месяцев, бюджет посчитали на месяц — и документы молча
+    показали несогласованные числа. Скрипт не правит данные, а говорит, что не сходится.
+    """
+    bg = data.get("budget_allocation") or {}
+    out: list[str] = []
+    months = planning_horizon_of(data)
+
+    brief_months = parse_horizon_from_brief(data.get("brief_md") or "")
+    bg_months = _as_positive_int(bg.get("planning_horizon_months"))
+    if brief_months and bg_months and brief_months != bg_months:
+        out.append(f"горизонт в брифе {brief_months} мес, в budget_allocation.json {bg_months} мес")
+
+    monthly = _as_positive_int(bg.get("monthly_budget"))
+    total = _as_positive_int(bg.get("total_budget"))
+    if monthly and total and abs(total - monthly * months) > 0.01 * monthly * months:
+        out.append(f"total_budget {total} ≠ месячный {monthly} × горизонт {months} мес = {monthly * months}")
+
+    phases = bg.get("phases") or []
+    weeks = [_as_positive_int(ph.get("duration_weeks")) for ph in phases]
+    if phases and all(w is not None for w in weeks):
+        expected = months * 4.3
+        if abs(sum(weeks) - expected) > 0.25 * expected:
+            out.append(f"фазы покрывают {sum(weeks)} нед., а горизонт {months} мес ≈ {expected:.0f} нед.")
+    return out
+
+
 def total_budget_of(data: dict[str, Any]) -> Any:
     bg = data.get("budget_allocation") or {}
     return data.get("total_budget") or bg.get("total_budget") or bg.get("total_budget_3m")
