@@ -89,7 +89,7 @@ CHANNEL_LABELS = {
     "yandex_direct_rsya": "Яндекс.Директ — РСЯ",
     "yandex_direct": "Яндекс.Директ",
     "vk_ads": "VK Ads / myTarget",
-    "meta_ads": "Meta (Facebook/Instagram)",
+    "meta_ads": "Meta (Facebook/Instagram) — Meta признана экстремистской организацией и запрещена на территории России",
     "telegram_ads": "Telegram Ads",
     "tiktok_ads": "TikTok Ads",
     "dzen": "Яндекс.Дзен",
