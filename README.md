@@ -35,6 +35,12 @@
 
 Пакет устроен как папка скилла: `SKILL.md` в корне, рядом `references/` и `scripts/`. Агентная среда — программа, в которой работает агент, — берёт скиллы из своего каталога.
 
+Проще всего — из каталога плагинов [claude-plugins](https://github.com/ai-hub-open/claude-plugins): там же выбор способа установки ([какой способ выбрать](https://github.com/ai-hub-open/claude-plugins#какой-способ-установки-выбрать)) и включение автообновления.
+
+### Claude Desktop — через интерфейс
+
+На вкладке **Code**: кнопка **+** рядом с полем ввода → **Plugins** → **+ Add → Add marketplace** → `ai-hub-open/claude-plugins` → **Sync** → на вкладке **Discover** нажмите **Add** у `marketing-strategist`.
+
 ### Claude Code — плагином, с обновлениями
 
 В сессии Claude Code:
@@ -61,9 +67,11 @@ cp -r marketing-strategist/SKILL.md marketing-strategist/VERSION marketing-strat
 
 Копируются только эти четыре пути (по `VERSION` скилл узнаёт, что вышла новая версия): остальное в репозитории — сборка, проверки и этот файл — скиллу не нужно.
 
-### Claude Desktop и claude.ai
+### Архивом (claude.ai, любой тариф)
 
-Загрузчик принимает zip, внутри которого одна папка верхнего уровня и ровно один `SKILL.md`. Соберите архив из репозитория:
+Скачайте `marketing-strategist.zip` из блока **Assets** [последнего релиза](https://github.com/ai-hub-open/marketing-strategist/releases/latest) (не «Source code»). Включите **Settings → Capabilities → Code execution and file creation** и загрузите архив в **Customize → Skills → + → Create skill → Upload a skill**.
+
+Загрузчик принимает zip, внутри которого одна папка верхнего уровня и ровно один `SKILL.md`. Архив можно собрать и из репозитория:
 
 ```bash
 pip install pyyaml
@@ -72,7 +80,7 @@ python tools/build_skill_zip.py          # → dist/marketing-strategist.zip
 
 Перед упаковкой скрипт проверяет пакет: `SKILL.md` лежит в корне и он один, во фронтматтере — YAML-шапке файла — только `name` и `description`, описание не длиннее 200 символов, каждый путь `references/…` и `scripts/…`, упомянутый в `SKILL.md`, существует. Что-то не сошлось — архив не собирается, и в stderr написано, что именно. Прогнать одну проверку без сборки: `python tools/build_skill_zip.py --check`.
 
-Готовый архив загружается через **Settings → Capabilities → Skills**.
+Собранный архив загружается так же — через **Customize → Skills**.
 
 Кнопка **Code → Download ZIP** для этого не годится: она отдаёт папку `marketing-strategist-main/` с файлами репозитория, которых загрузчик не ждёт.
 
@@ -127,7 +135,7 @@ python scripts/generate_pdf_summary.py     --workspace marketing-campaigns/<slug
 
 ## Коннекторы
 
-Оба — хостовые MCP click.ru. Адрес содержит токен и равносилен паролю: не пересылайте его и не
+Оба сервера размещены на стороне click.ru — разворачивать ничего не нужно. Адрес содержит токен и равносилен паролю: не пересылайте его и не
 вставляйте в общие чаты.
 
 | Коннектор | Адрес | Зачем стратегу |
