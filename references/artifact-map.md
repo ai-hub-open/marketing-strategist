@@ -31,10 +31,10 @@ industry_research.json ─┬─→ Шаг 9 channel-selection (бенчмарк
 05_competitor_analysis.md ─→ Шаг 9 channel-selection (матрица каналов конкурентов)
 
 hypotheses.md (selected) ─┬─→ Шаг 7 Buyer Personas (сегменты)
-                          ├─→ Шаг 8 usp-generator (углы)
+                          ├─→ Шаг 8 usp-generator (способы подачи)
                           └─→ Шаг 9 channel-selection (где проверяем)
 
-07_personas.md ─→ Шаг 9 channel-selection (где живут цифровым следом)
+07_personas.md ─→ Шаг 9 channel-selection (где бывают в интернете)
 
 usp_final.json ─→ финальный отчёт + handoff
 
